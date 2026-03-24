@@ -1261,15 +1261,42 @@ function submit() {
   formData.append('feedback', document.getElementById('q-feedback').value);
   formData.append('extra', document.getElementById('q-extra').value);
 
-  fetch('/', { method: 'POST', body: formData })
+  // Preparar datos para Google Apps Script
+  const datosParaSheet = {
+    nombre: document.getElementById('q-nombre').value,
+    mesVibe: document.getElementById('q-mes-vibe').value,
+    logro: document.getElementById('q-logro').value,
+    dificil: document.getElementById('q-dificil').value,
+    peso: document.getElementById('q-peso').value || '',
+    sesiones: document.getElementById('q-sesiones').value || '',
+    horasSueno: document.getElementById('q-horas-sueno').value || '',
+    estres: document.getElementById('q-estres').value || '',
+    fisico: document.getElementById('q-fisico').value || '',
+    sueno: document.getElementById('q-sueno').value || '',
+    nutricion: document.getElementById('q-nutricion').value || '',
+    intensidad: document.getElementById('q-intensidad').value || '',
+    planOk: document.getElementById('q-plan-ok').value || '',
+    progreso: document.getElementById('q-progreso').value || '',
+    lesion: document.getElementById('q-lesion').value || '',
+    feedback: document.getElementById('q-feedback').value || '',
+    extra: document.getElementById('q-extra').value || ''
+  };
+
+  // Enviar a Google Apps Script
+  fetch('https://script.google.com/macros/s/AKfycbzXmDkEVvEN4_-w_E87PQTMZDKFJLkoveDifU2PyZ8nsOqDoOXZc1B-6ubjXNX5ikk5/exec', {
+    method: 'POST',
+    body: JSON.stringify(datosParaSheet),
+    mode: 'no-cors'
+  })
     .then(() => {
       document.getElementById('s2').classList.remove('active');
       document.getElementById('success').style.display = 'flex';
       document.getElementById('progress-fill').style.width = '100%';
       document.querySelectorAll('.step-label').forEach(el => el.classList.add('done'));
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      console.log('✅ Datos enviados a Google Sheets');
     })
-    .catch(error => console.log('Error:', error));
+    .catch(error => console.log('❌ Error:', error));
 }
 
 updateProgress();
