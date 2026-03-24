@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Check-in Mensual | Zeus Fitness Club</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f2ee;
+    --surface: #ffffff;
+    --accent: #111111;
+    --primary: #1a4fd6;
+    --primary-dark: #1240b0;
+    --muted: #e0ddd8;
+    --sub: #999;
+    --text: #1a1a1a;
+    --success: #2a7a2a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    padding: 0 0 80px;
+  }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, var(--accent) 0%, #1a1a1a 100%);
+    padding: 48px 40px 52px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -40px;
+    left: -40px;
+    width: 200px;
+    height: 200px;
+    background: var(--primary);
+    border-radius: 50%;
+    opacity: 0.08;
+  }
+
+  .hero-tag {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--primary);
+    font-weight: 500;
+    margin-bottom: 12px;
+  }
+
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(36px, 7vw, 56px);
+    line-height: 1;
+    letter-spacing: 2px;
+    color: #fff;
+  }
+
+  .hero h1 span { color: var(--primary); }
+
+  .hero-sub {
+    margin-top: 12px;
+    font-size: 15px;
+    color: #aaa;
+    font-weight: 300;
+    line-height: 1.6;
+    max-width: 480px;
+  }
+
+  /* PROGRESS BAR */
+  .progress-wrap {
+    background: var(--accent);
+    padding: 0 40px 20px;
+  }
+
+  .progress-bar-track {
+    height: 3px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--primary);
+    border-radius: 10px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  .progress-steps {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+  }
+
+  .step-label {
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+
+  .step-label.active { color: var(--primary); }
+  .step-label.done { color: rgba(255,255,255,0.6); }
+
+  /* FORM CONTAINER */
+  .form-wrap {
+    max-width: 680px;
+    margin: 40px auto 0;
+    padding: 0 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  /* SECTION */
+  .section {
+    display: none;
+    flex-direction: column;
+    gap: 28px;
+    animation: fadeUp 0.4s ease forwards;
+  }
+
+  .section.active { display: flex; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 8px;
+  }
+
+  .section-icon {
+    width: 48px;
+    height: 48px;
+    background: var(--accent);
+    color: var(--primary);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+
+  .section-title-wrap h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    letter-spacing: 2px;
+  }
+
+  .section-title-wrap p {
+    font-size: 13px;
+    color: var(--sub);
+    margin-top: 3px;
+  }
+
+  /* FIELD */
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .field label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .field label .optional {
+    font-size: 10px;
+    color: var(--sub);
+    font-weight: 400;
+    letter-spacing: 1px;
+  }
+
+  .field input[type=text],
+  .field input[type=number],
+  .field input[type=email],
+  .field textarea,
+  .field select {
+    background: #ffffff;
+    border: 2px solid #e0ddd8;
+    border-radius: 12px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    padding: 12px 16px;
+    outline: none;
+    width: 100%;
+    transition: all 0.2s;
+  }
+
+  .field input::placeholder,
+  .field textarea::placeholder {
+    color: #bbb;
+  }
+
+  .field input:focus,
+  .field textarea:focus,
+  .field select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(26,79,214,0.1);
+  }
+
+  .field textarea {
+    resize: vertical;
+    min-height: 90px;
+    line-height: 1.6;
+  }
+
+  .field .hint {
+    font-size: 12px;
+    color: var(--sub);
+    line-height: 1.5;
+    margin-top: -6px;
+  }
+
+  /* TWO COL */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  @media (max-width: 480px) {
+    .two-col { grid-template-columns: 1fr; }
+  }
+
+  /* SLIDER RATING */
+  .slider-rating {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .slider-input {
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: linear-gradient(to right, #e0ddd8 0%, var(--primary) var(--value, 0%), #e0ddd8 var(--value, 0%), #e0ddd8 100%);
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .slider-input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--primary);
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(26,79,214,0.2);
+    transition: all 0.2s;
+  }
+
+  .slider-input::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--primary);
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 8px rgba(26,79,214,0.2);
+    transition: all 0.2s;
+  }
+
+  .slider-input::-webkit-slider-thumb:hover {
+    transform: scale(1.15);
+    box-shadow: 0 4px 12px rgba(26,79,214,0.4);
+  }
+
+  .slider-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--sub);
+    padding: 0 2px;
+  }
+
+  .slider-value {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .slider-value span {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--primary);
+    min-width: 40px;
+    text-align: center;
+  }
+
+  .slider-value p {
+    font-size: 12px;
+    color: var(--sub);
+  }
+
+  /* EMOJI CHOICE */
+  .emoji-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .emoji-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 14px 16px;
+    border: 2px solid #e0ddd8;
+    border-radius: 14px;
+    background: #ffffff;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-size: 28px;
+    flex: 1;
+    min-width: 70px;
+    text-align: center;
+  }
+
+  .emoji-btn span {
+    font-size: 12px;
+    color: var(--text);
+    font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .emoji-btn:hover {
+    border-color: var(--primary);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(26,79,214,0.15);
+  }
+
+  .emoji-btn.selected {
+    border-color: var(--primary);
+    background: var(--primary);
+  }
+
+  .emoji-btn.selected span {
+    color: #fff;
+  }
+
+  /* QUICK RATING - Estrés */
+  .quick-rating {
+    display: flex;
+    gap: 8px;
+  }
+
+  .stress-btn {
+    flex: 1;
+    padding: 10px 12px;
+    border: 2px solid #e0ddd8;
+    border-radius: 10px;
+    background: #ffffff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: var(--text);
+  }
+
+  .stress-btn:hover {
+    border-color: var(--primary);
+    background: #eef2ff;
+  }
+
+  .stress-btn.selected {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+  }
+
+  .stress-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--sub);
+    margin-top: 6px;
+    padding: 0 2px;
+  }
+
+  /* CHECKBOX GROUP */
+  .checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    border: 2px solid #e0ddd8;
+    border-radius: 10px;
+    background: #ffffff;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    user-select: none;
+  }
+
+  .checkbox-item:hover {
+    border-color: var(--primary);
+    background: #eef2ff;
+  }
+
+  .checkbox-item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--primary);
+    flex-shrink: 0;
+  }
+
+  .checkbox-item:has(input[type="checkbox"]:checked) {
+    border-color: var(--primary);
+    background: var(--primary);
+    color: #fff;
+  }
+
+  .nav-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+    justify-content: space-between;
+  }
+
+  button {
+    padding: 14px 24px;
+    border: 2px solid #e0ddd8;
+    border-radius: 12px;
+    background: #ffffff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text);
+  }
+
+  .btn-next {
+    flex: 1;
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+  }
+
+  .btn-next:hover {
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
+  }
+
+  .btn-back {
+    background: #ffffff;
+  }
+
+  .btn-back:hover {
+    background: #f9f8f6;
+    border-color: var(--primary);
+  }
+
+  .btn-submit {
+    background: var(--success);
+    border-color: var(--success);
+    color: #fff;
+    flex: 1;
+  }
+
+  .btn-submit:hover {
+    background: #208020;
+    border-color: #208020;
+  }
+
+  /* SUCCESS */
+  #success {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    padding: 60px 40px;
+    text-align: center;
+  }
+
+  .success-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--success);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    animation: popIn 0.5s ease;
+  }
+
+  @keyframes popIn {
+    0% { transform: scale(0.3); opacity: 0; }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  #success h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    letter-spacing: 2px;
+  }
+
+  #success p {
+    color: var(--sub);
+    font-size: 15px;
+    line-height: 1.6;
+    max-width: 480px;
+  }
+
+  .summary-box {
+    background: var(--surface);
+    border: 1px solid #e0ddd8;
+    border-radius: 16px;
+    padding: 24px;
+    width: 100%;
+    max-width: 680px;
+    text-align: left;
+  }
+
+  .summary-title {
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--sub);
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e0ddd8;
+  }
+
+  .summary-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0eeeb;
+    font-size: 14px;
+  }
+
+  .summary-item:last-child {
+    border-bottom: none;
+  }
+
+  .summary-item strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .summary-item span {
+    color: var(--primary);
+    font-weight: 500;
+    text-align: right;
+  }
+
+  @media (max-width: 480px) {
+    .hero {
+      padding: 28px 16px 32px;
+    }
+
+    .hero h1 {
+      font-size: clamp(26px, 8vw, 38px);
+    }
+
+    .hero-sub {
+      font-size: 14px;
+      max-width: 100%;
+    }
+
+    .progress-wrap {
+      padding: 0 16px 16px;
+    }
+
+    .form-wrap {
+      padding: 0 16px;
+      margin: 28px auto 0;
+    }
+
+    .section {
+      gap: 18px;
+    }
+
+    .section-header {
+      gap: 12px;
+      margin-bottom: 4px;
+    }
+
+    .section-icon {
+      width: 40px;
+      height: 40px;
+      font-size: 20px;
+    }
+
+    .section-title-wrap h2 {
+      font-size: 22px;
+    }
+
+    .section-title-wrap p {
+      font-size: 12px;
+    }
+
+    .field {
+      gap: 8px;
+    }
+
+    .field label {
+      font-size: 13px;
+    }
+
+    .field input[type=text],
+    .field input[type=number],
+    .field input[type=email],
+    .field textarea,
+    .field select {
+      padding: 14px 16px;
+      font-size: 16px;
+    }
+
+    .two-col {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .slider-value {
+      gap: 6px;
+    }
+
+    .slider-value span {
+      font-size: 24px;
+    }
+
+    .slider-value p {
+      font-size: 11px;
+    }
+
+    .slider-labels {
+      font-size: 10px;
+    }
+
+    .emoji-row {
+      gap: 8px;
+    }
+
+    .emoji-btn {
+      font-size: 24px;
+      padding: 12px 10px;
+      min-width: 60px;
+      gap: 4px;
+    }
+
+    .emoji-btn span {
+      font-size: 11px;
+    }
+
+    .quick-rating {
+      gap: 6px;
+    }
+
+    .stress-btn {
+      padding: 12px 8px;
+      font-size: 13px;
+    }
+
+    .nav-row {
+      gap: 8px;
+      margin-top: 12px;
+      flex-direction: column-reverse;
+    }
+
+    button {
+      padding: 16px 20px;
+      font-size: 13px;
+      min-height: 48px;
+    }
+
+    .btn-back,
+    .btn-next,
+    .btn-submit {
+      width: 100%;
+    }
+
+    #success {
+      padding: 40px 20px;
+      gap: 20px;
+    }
+
+    #success h2 {
+      font-size: 26px;
+    }
+
+    #success p {
+      font-size: 14px;
+      padding: 0 8px;
+    }
+
+    .summary-box {
+      padding: 16px;
+      border-radius: 12px;
+    }
+
+    .summary-title {
+      font-size: 12px;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+    }
+
+    .summary-item {
+      padding: 10px 0;
+      font-size: 13px;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .summary-item span {
+      text-align: left;
+    }
+
+    .success-circle {
+      width: 64px;
+      height: 64px;
+      font-size: 36px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- Formulario oculto para Netlify Forms -->
+<form name="zeus-checkin" method="POST" netlify hidden style="display:none">
+  <input type="text" name="nombre" />
+  <input type="text" name="mes-vibe" />
+  <input type="text" name="logro" />
+  <input type="text" name="dificil" />
+  <input type="text" name="peso" />
+  <input type="text" name="sesiones" />
+  <input type="text" name="horas-sueno" />
+  <input type="text" name="estres" />
+  <input type="text" name="fisico" />
+  <input type="text" name="sueno" />
+  <input type="text" name="nutricion" />
+  <input type="text" name="intensidad" />
+  <input type="text" name="plan-ok" />
+  <input type="text" name="progreso" />
+  <input type="text" name="lesion" />
+  <input type="text" name="feedback" />
+  <input type="text" name="extra" />
+</form>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">Check-in Mensual</div>
+  <h1>¿Cómo estuvo <span>tu mes?</span></h1>
+  <p class="hero-sub">Cuéntame sobre tu progreso, cómo te sentiste y qué podemos mejorar juntos. Esto me ayuda a personalizar mejor tu entrenamiento.</p>
+</div>
+
+<!-- PROGRESS BAR -->
+<div class="progress-wrap">
+  <div class="progress-bar-track">
+    <div class="progress-bar-fill" id="progress-fill"></div>
+  </div>
+  <div class="progress-steps">
+    <span class="step-label active">Resumen</span>
+    <span class="step-label">Salud</span>
+    <span class="step-label">Entreno</span>
+  </div>
+</div>
+
+<!-- FORM -->
+<div class="form-wrap">
+
+  <!-- SECCIÓN 0: RESUMEN GENERAL -->
+  <div class="section active" id="s0">
+    <div class="section-header">
+      <div class="section-icon">📊</div>
+      <div class="section-title-wrap">
+        <h2>RESUMEN GENERAL</h2>
+        <p>Cómo fue tu mes</p>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Tu nombre <span class="req">*</span></label>
+      <input type="text" id="q-nombre" placeholder="Ej. Carlos">
+    </div>
+
+    <div class="field">
+      <label>En general, ¿cómo fue tu mes? <span class="req">*</span></label>
+      <div class="emoji-row">
+        <div class="emoji-btn" onclick="pick(this,'q-mes-vibe','Excelente')">🔥<span>Excelente</span></div>
+        <div class="emoji-btn" onclick="pick(this,'q-mes-vibe','Muy bien')">✨<span>Muy bien</span></div>
+        <div class="emoji-btn" onclick="pick(this,'q-mes-vibe','Bien')">👍<span>Bien</span></div>
+        <div class="emoji-btn" onclick="pick(this,'q-mes-vibe','Más o menos')">😐<span>Así así</span></div>
+      </div>
+      <input type="hidden" id="q-mes-vibe">
+    </div>
+
+    <div class="field">
+      <label>Tu mayor logro este mes <span class="req">*</span></label>
+      <div class="checkbox-group">
+        <label class="checkbox-item">
+          <input type="checkbox" name="q-logro" value="Mejoré mi técnica"> Mejoré mi técnica
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" name="q-logro" value="Aumenté peso/carga"> Aumenté peso/carga
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" name="q-logro" value="Fui consistente"> Fui consistente todo el mes
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" name="q-logro" value="Superé una lesión"> Superé una lesión
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" name="q-logro" value="Mejoré mi condición"> Mejoré mi condición física
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" name="q-logro" value="Otro"> Otro
+        </label>
+      </div>
+      <input type="hidden" id="q-logro">
+    </div>
+
+    <div class="field">
+      <label>¿Qué fue lo más difícil? <span class="req">*</span></label>
+      <div class="checkbox-group">
+        <label class="checkbox-item">
+          <input type="checkbox" name="q-dificil" value="Mantener consistencia"> Mantener consistencia
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" name="q-dificil" value="Falta de tiempo"> Falta de tiempo
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" name="q-dificil" value="Lesiones o dolor"> Lesiones o dolor
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" name="q-dificil" value="Falta de motivación"> Falta de motivación
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" name="q-dificil" value="Problemas de nutrición"> Problemas de nutrición
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" name="q-dificil" value="Estrés/cambios en vida"> Estrés o cambios en mi vida
+        </label>
+      </div>
+      <input type="hidden" id="q-dificil">
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-next" onclick="next(0)">SIGUIENTE →</button>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 1: SALUD Y RECUPERACIÓN -->
+  <div class="section" id="s1">
+    <div class="section-header">
+      <div class="section-icon">💪</div>
+      <div class="section-title-wrap">
+        <h2>SALUD Y RECUPERACIÓN</h2>
+        <p>Tu cuerpo y bienestar</p>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="field">
+        <label>Peso actual <span class="optional">OPCIONAL</span></label>
+        <input type="number" id="q-peso" placeholder="Ej. 75.5" step="0.1">
+      </div>
+      <div class="field">
+        <label>Sesiones completadas <span class="optional">OPCIONAL</span></label>
+        <input type="number" id="q-sesiones" placeholder="Ej. 12 de 16">
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Horas de sueño promedio <span class="optional">OPCIONAL</span></label>
+      <div class="slider-rating">
+        <div class="slider-value">
+          <span id="q-horas-val">7</span>
+          <p id="q-horas-emoji">😴</p>
+        </div>
+        <input type="range" id="q-horas-slider" class="slider-input" min="5" max="10" value="7" step="0.5">
+        <div class="slider-labels">
+          <span>Muy poco</span>
+          <span>Excelente</span>
+        </div>
+      </div>
+      <input type="hidden" id="q-horas-sueno">
+    </div>
+
+    <div class="field">
+      <label>Nivel de estrés <span class="req">*</span></label>
+      <div class="quick-rating">
+        <button type="button" class="stress-btn" onclick="pickStress(1, this)">1</button>
+        <button type="button" class="stress-btn" onclick="pickStress(2, this)">2</button>
+        <button type="button" class="stress-btn" onclick="pickStress(3, this)">3</button>
+        <button type="button" class="stress-btn" onclick="pickStress(4, this)">4</button>
+        <button type="button" class="stress-btn" onclick="pickStress(5, this)">5</button>
+      </div>
+      <div class="stress-labels">
+        <span>Relajado</span>
+        <span>Estresado</span>
+      </div>
+      <input type="hidden" id="q-estres">
+    </div>
+
+    <div class="field">
+      <label>¿Cómo te sentiste físicamente? <span class="req">*</span></label>
+      <div class="slider-rating">
+        <div class="slider-value">
+          <span id="q-fisico-val">5</span>
+          <p id="q-fisico-text">Neutral</p>
+        </div>
+        <input type="range" id="q-fisico-slider" class="slider-input" min="1" max="10" value="5">
+        <div class="slider-labels">
+          <span>Muy mal</span>
+          <span>Muy bien</span>
+        </div>
+      </div>
+      <input type="hidden" id="q-fisico">
+    </div>
+
+    <div class="field">
+      <label>Tu sueño y recuperación <span class="req">*</span></label>
+      <div class="slider-rating">
+        <div class="slider-value">
+          <span id="q-sueno-val">5</span>
+          <p id="q-sueno-text">Neutral</p>
+        </div>
+        <input type="range" id="q-sueno-slider" class="slider-input" min="1" max="10" value="5">
+        <div class="slider-labels">
+          <span>Muy mal</span>
+          <span>Muy bien</span>
+        </div>
+      </div>
+      <input type="hidden" id="q-sueno">
+    </div>
+
+    <div class="field">
+      <label>¿Qué tal fue tu nutrición? <span class="req">*</span></label>
+      <div class="emoji-row">
+        <div class="emoji-btn" onclick="pick(this,'q-nutricion','Perfecta')">🥗<span>Perfecta</span></div>
+        <div class="emoji-btn" onclick="pick(this,'q-nutricion','Bien')">✅<span>Bien</span></div>
+        <div class="emoji-btn" onclick="pick(this,'q-nutricion','Más o menos')">🤔<span>Así así</span></div>
+        <div class="emoji-btn" onclick="pick(this,'q-nutricion','Mala')">🍔<span>Mala</span></div>
+      </div>
+      <input type="hidden" id="q-nutricion">
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-back" onclick="back(1)">← ATRÁS</button>
+      <button class="btn-next" onclick="next(1)">SIGUIENTE →</button>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 2: ENTRENAMIENTO Y FEEDBACK -->
+  <div class="section" id="s2">
+    <div class="section-header">
+      <div class="section-icon">⚡</div>
+      <div class="section-title-wrap">
+        <h2>ENTRENAMIENTO Y PROGRESO</h2>
+        <p>Tu rendimiento y objetivos</p>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>¿Qué tan duro entrenaste? <span class="req">*</span></label>
+      <div class="slider-rating">
+        <div class="slider-value">
+          <span id="q-intensidad-val">5</span>
+          <p id="q-intensidad-text">Moderado</p>
+        </div>
+        <input type="range" id="q-intensidad-slider" class="slider-input" min="1" max="10" value="5">
+        <div class="slider-labels">
+          <span>Muy suave</span>
+          <span>Al límite</span>
+        </div>
+      </div>
+      <input type="hidden" id="q-intensidad">
+    </div>
+
+    <div class="field">
+      <label>¿El plan de entrenamiento te funciona? <span class="req">*</span></label>
+      <div class="emoji-row">
+        <div class="emoji-btn" onclick="pick(this,'q-plan-ok','Perfecto')">✅<span>Perfecto</span></div>
+        <div class="emoji-btn" onclick="pick(this,'q-plan-ok','Casi')">👍<span>Casi</span></div>
+        <div class="emoji-btn" onclick="pick(this,'q-plan-ok','Más o menos')">🤔<span>Así así</span></div>
+        <div class="emoji-btn" onclick="pick(this,'q-plan-ok','Necesita cambios')">🔧<span>Cambios</span></div>
+      </div>
+      <input type="hidden" id="q-plan-ok">
+    </div>
+
+    <div class="field">
+      <label>¿Sientes que avanzas hacia tu objetivo? <span class="req">*</span></label>
+      <div class="emoji-row">
+        <div class="emoji-btn" onclick="pick(this,'q-progreso','Claramente')">🚀<span>Claramente</span></div>
+        <div class="emoji-btn" onclick="pick(this,'q-progreso','Sí, poco a poco')">📈<span>Lentamente</span></div>
+        <div class="emoji-btn" onclick="pick(this,'q-progreso','No estoy seguro')">🤷<span>No sé</span></div>
+        <div class="emoji-btn" onclick="pick(this,'q-progreso','No lo siento')">📉<span>No avanzo</span></div>
+      </div>
+      <input type="hidden" id="q-progreso">
+    </div>
+
+    <div class="field">
+      <label>¿Tuviste alguna lesión o molestia? <span class="optional">OPCIONAL</span></label>
+      <div class="emoji-row">
+        <div class="emoji-btn" onclick="pick(this,'q-lesion','Ninguna')">✅<span>Ninguna</span></div>
+        <div class="emoji-btn" onclick="pick(this,'q-lesion','Molestias leves')">⚠️<span>Leves</span></div>
+        <div class="emoji-btn" onclick="pick(this,'q-lesion','Dolor moderado')">🤕<span>Moderado</span></div>
+        <div class="emoji-btn" onclick="pick(this,'q-lesion','Lesión seria')">❌<span>Seria</span></div>
+      </div>
+      <input type="hidden" id="q-lesion">
+    </div>
+
+    <div class="field">
+      <label>Ejercicios que más disfrutaste <span class="optional">OPCIONAL</span></label>
+      <textarea id="q-ejercicio-fav" placeholder="Ej. Peso muerto, press de banca, sentadillas..."></textarea>
+    </div>
+
+    <div class="field">
+      <label>Ejercicios que menos te gustaron <span class="optional">OPCIONAL</span></label>
+      <textarea id="q-ejercicio-malo" placeholder="Ej. Flexiones, remo, abdominales..."></textarea>
+    </div>
+
+    <div class="field">
+      <label>¿Hay algo que quieras cambiar o probar? <span class="optional">OPCIONAL</span></label>
+      <div class="checkbox-group">
+        <label class="checkbox-item">
+          <input type="checkbox" name="q-feedback" value="Más intensidad"> Quiero más intensidad
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" name="q-feedback" value="Menos volumen"> Quiero menos volumen
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" name="q-feedback" value="Cambiar ejercicios"> Cambiar algunos ejercicios
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" name="q-feedback" value="Más cardio"> Agregar o más cardio
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" name="q-feedback" value="Trabajar debilidad"> Trabajar una debilidad
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" name="q-feedback" value="Otro"> Otro
+        </label>
+      </div>
+      <input type="hidden" id="q-feedback">
+    </div>
+
+    <div class="field">
+      <label>¿Algo más que quieras contarme? <span class="optional">OPCIONAL</span></label>
+      <textarea id="q-extra" placeholder="Lesiones, cambios en tu vida, dudas... Esto es confidencial 🔒"></textarea>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-back" onclick="back(2)">← ATRÁS</button>
+      <button class="btn-submit" onclick="submit()">✓ ENVIAR CHECK-IN</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- SUCCESS -->
+<div id="success" style="max-width:680px;margin:0 auto;padding:0 24px">
+  <div class="success-circle">✓</div>
+  <h2>¡LISTO, GRACIAS!</h2>
+  <p>Recibí tu check-in y lo revisaré con atención. Te prepararé una retro personalizada en tu próxima sesión.</p>
+  <div class="summary-box" id="summary-box"></div>
+</div>
+
+<script>
+let current = 0;
+const total = 3;
+
+const sliderConfigs = [
+  { sliderId: 'q-fisico-slider', valueId: 'q-fisico-val', textId: 'q-fisico-text', hiddenId: 'q-fisico', texts: ['Fatal', 'Muy mal', 'Mal', 'Deficiente', 'Neutral', 'Bien', 'Muy bien', 'Excelente', 'Perfecto', 'Extraordinario'] },
+  { sliderId: 'q-sueno-slider', valueId: 'q-sueno-val', textId: 'q-sueno-text', hiddenId: 'q-sueno', texts: ['Fatal', 'Muy mal', 'Mal', 'Deficiente', 'Neutral', 'Bien', 'Muy bien', 'Excelente', 'Perfecto', 'Extraordinario'] },
+  { sliderId: 'q-intensidad-slider', valueId: 'q-intensidad-val', textId: 'q-intensidad-text', hiddenId: 'q-intensidad', texts: ['Muy suave', 'Suave', 'Leve', 'Moderado-bajo', 'Moderado', 'Moderado-alto', 'Intenso', 'Muy intenso', 'Extremo', 'Al límite'] },
+];
+
+sliderConfigs.forEach(config => {
+  const slider = document.getElementById(config.sliderId);
+  slider.addEventListener('input', function() {
+    const val = this.value;
+    document.getElementById(config.valueId).textContent = val;
+    document.getElementById(config.textId).textContent = config.texts[val - 1];
+    document.getElementById(config.hiddenId).value = val;
+  });
+  slider.dispatchEvent(new Event('input'));
+});
+
+// Horas de sueño con emojis de calidad
+const horasSlider = document.getElementById('q-horas-slider');
+const sleepEmojis = ['😴', '😴', '😴', '😴😴', '😴😴', '😴😴😴', '😴😴😴', '😴😴😴🌟', '😴😴😴🌟🌟', '🌟🌟🌟🌟🌟'];
+horasSlider.addEventListener('input', function() {
+  const val = this.value;
+  const intVal = Math.round(val * 2) / 2;
+  document.getElementById('q-horas-val').textContent = intVal;
+  document.getElementById('q-horas-emoji').textContent = sleepEmojis[Math.round(val) - 5];
+  document.getElementById('q-horas-sueno').value = intVal;
+});
+horasSlider.dispatchEvent(new Event('input'));
+
+function pick(el, hiddenId, value) {
+  const parent = el.parentElement;
+  parent.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById(hiddenId).value = value;
+}
+
+function pickStress(val, el) {
+  const parent = el.parentElement;
+  parent.querySelectorAll('.stress-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('q-estres').value = val;
+}
+
+// Capturar checkboxes
+function getCheckedValues(name) {
+  const checked = Array.from(document.querySelectorAll(`input[name="${name}"]:checked`))
+    .map(cb => cb.value);
+  return checked.length > 0 ? checked.join(', ') : '';
+}
+
+// Actualizar campos ocultos cuando se hace click en checkboxes
+document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+  checkbox.addEventListener('change', function() {
+    const fieldId = `#${this.name}`;
+    const hiddenInput = document.querySelector(fieldId);
+    if (hiddenInput) {
+      hiddenInput.value = getCheckedValues(this.name);
+    }
+  });
+});
+
+function updateProgress() {
+  const pct = (current / total) * 100;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.querySelectorAll('.step-label').forEach((el, i) => {
+    el.classList.remove('active', 'done');
+    if (i === current) el.classList.add('active');
+    else if (i < current) el.classList.add('done');
+  });
+}
+
+function req(id, label) {
+  const v = document.getElementById(id).value.trim();
+  if (!v) { alert(`Por favor completa: ${label}`); return false; }
+  return true;
+}
+
+function next(step) {
+  if (step === 0) {
+    if (!req('q-nombre', 'Tu nombre')) return;
+    if (!req('q-mes-vibe', 'Cómo fue tu mes')) return;
+    if (!req('q-logro', 'Tu mayor logro')) return;
+    if (!req('q-dificil', 'Lo más difícil')) return;
+  }
+  if (step === 1) {
+    if (!req('q-fisico', 'Cómo te sentiste físicamente')) return;
+    if (!req('q-sueno', 'Tu sueño y recuperación')) return;
+    if (!req('q-nutricion', 'Tu nutrición')) return;
+  }
+
+  document.getElementById(`s${step}`).classList.remove('active');
+  current = step + 1;
+  document.getElementById(`s${current}`).classList.add('active');
+  updateProgress();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function back(step) {
+  document.getElementById(`s${step}`).classList.remove('active');
+  current = step - 1;
+  document.getElementById(`s${current}`).classList.add('active');
+  updateProgress();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function submit() {
+  if (!req('q-intensidad', 'Qué tan duro entrenaste')) return;
+  if (!req('q-plan-ok', 'Si el plan te funciona')) return;
+  if (!req('q-progreso', 'Si sientes que avanzas')) return;
+
+  const data = {
+    'Nombre': document.getElementById('q-nombre').value,
+    'Mes general': document.getElementById('q-mes-vibe').value,
+    'Mayor logro': document.getElementById('q-logro').value,
+    'Lo más difícil': document.getElementById('q-dificil').value,
+    'Peso': document.getElementById('q-peso').value || '—',
+    'Sesiones': document.getElementById('q-sesiones').value || '—',
+    'Horas de sueño': (document.getElementById('q-horas-sueno').value || '—') + ' hrs',
+    'Nivel de estrés': document.getElementById('q-estres').value + '/5',
+    'Físicamente': document.getElementById('q-fisico').value + '/10',
+    'Sueño y recuperación': document.getElementById('q-sueno').value + '/10',
+    'Nutrición': document.getElementById('q-nutricion').value,
+    'Intensidad': document.getElementById('q-intensidad').value + '/10',
+    'Plan': document.getElementById('q-plan-ok').value,
+    'Avance': document.getElementById('q-progreso').value,
+    'Lesiones': document.getElementById('q-lesion').value || 'Ninguna',
+  };
+
+  const box = document.getElementById('summary-box');
+  box.innerHTML = '<div class="summary-title">TU CHECK-IN</div>' +
+    Object.entries(data).map(([k, v]) =>
+      `<div class="summary-item"><strong>${k}</strong><span>${v}</span></div>`
+    ).join('');
+
+  // Enviar a Netlify Forms
+  const formData = new FormData();
+  formData.append('form-name', 'zeus-checkin');
+  formData.append('nombre', document.getElementById('q-nombre').value);
+  formData.append('mes-vibe', document.getElementById('q-mes-vibe').value);
+  formData.append('logro', document.getElementById('q-logro').value);
+  formData.append('dificil', document.getElementById('q-dificil').value);
+  formData.append('peso', document.getElementById('q-peso').value);
+  formData.append('sesiones', document.getElementById('q-sesiones').value);
+  formData.append('horas-sueno', document.getElementById('q-horas-sueno').value);
+  formData.append('estres', document.getElementById('q-estres').value);
+  formData.append('fisico', document.getElementById('q-fisico').value);
+  formData.append('sueno', document.getElementById('q-sueno').value);
+  formData.append('nutricion', document.getElementById('q-nutricion').value);
+  formData.append('intensidad', document.getElementById('q-intensidad').value);
+  formData.append('plan-ok', document.getElementById('q-plan-ok').value);
+  formData.append('progreso', document.getElementById('q-progreso').value);
+  formData.append('lesion', document.getElementById('q-lesion').value);
+  formData.append('feedback', document.getElementById('q-feedback').value);
+  formData.append('extra', document.getElementById('q-extra').value);
+
+  fetch('/', { method: 'POST', body: formData })
+    .then(() => {
+      document.getElementById('s2').classList.remove('active');
+      document.getElementById('success').style.display = 'flex';
+      document.getElementById('progress-fill').style.width = '100%';
+      document.querySelectorAll('.step-label').forEach(el => el.classList.add('done'));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    })
+    .catch(error => console.log('Error:', error));
+}
+
+updateProgress();
+</script>
+</body>
+</html>
